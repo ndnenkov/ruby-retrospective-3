@@ -40,7 +40,9 @@ class Array
   end
 
   def drop_every(n)
-    reject { |i| index(i).next.divisable_by?(n) }
+    each_with_index.reject do |element, index|
+      index.next.remainder(n).zero?
+    end.map(&:first)
   end
 
   def combine_with(other)
