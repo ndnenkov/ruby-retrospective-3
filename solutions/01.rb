@@ -46,21 +46,10 @@ class Array
   end
 
   def combine_with(other)
-    combined = []
-    the_greater_size = (size > other.size) ? size : other.size
-    0.upto(the_greater_size.pred).each do |i|
-      combined += what_to_append(other, i)
-    end
-    combined
-  end
+    shorter, longer = [self, other].minmax_by(&:length)
+    combined = take(shorter.length).zip(other.take(shorter.length)).flatten(1)
+    rest     = longer.drop(shorter.length)
 
-  private
-
-  def what_to_append(other, index)
-    if size > index and other.size > index
-      [self[index], other[index]]
-    else
-      size <= index ? [other[index]] : [self[index]]
-    end
+    combined + rest
   end
 end
