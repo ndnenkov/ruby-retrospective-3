@@ -1,11 +1,8 @@
 class Integer
 
   def prime?
-    if self > 1
-      not (2..pred).reduce(false) { |was_div, i| was_div or divisable_by?(i) }
-    else
-      false
-    end
+    return false if self <= 1
+    2.upto(pred).all? { |possible_divisor| not divisable_by?(possible_divisor) }
   end
 
   def prime_factors
@@ -23,11 +20,12 @@ class Integer
     abs.to_s.split('').map(&:to_i)
   end
 
+  private
+
   def divisable_by?(what)
     (self % what).zero?
   end
 
-  private
   def times_to_repeat(prime_factor)
     number = self
     count = 0
