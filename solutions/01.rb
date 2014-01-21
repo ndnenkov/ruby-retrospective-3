@@ -6,10 +6,12 @@ class Integer
   end
 
   def prime_factors
-    pfs_repeating = []
-    pfs = (2..abs.pred).select { |i| divisable_by?(i) and i.prime? }
-    pfs.each { |pf| pfs_repeating += Array.new(times_to_repeat(pf), pf) }
-    pfs_repeating
+    return [] if self == 1
+    prime_factor = 2.upto(abs).find do |possible_factor|
+      divisable_by?(possible_factor)
+    end
+
+    [prime_factor] + abs.div(prime_factor).prime_factors
   end
 
   def harmonic
@@ -25,17 +27,6 @@ class Integer
   def divisable_by?(what)
     remainder(what).zero?
   end
-
-  def times_to_repeat(prime_factor)
-    number = self
-    count = 0
-    while number.divisable_by?(prime_factor)
-      number /= prime_factor
-      count += 1
-    end
-    count
-  end
-
 end
 
 class Array
