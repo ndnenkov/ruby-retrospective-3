@@ -23,7 +23,7 @@ class Integer
   private
 
   def divisable_by?(what)
-    (self % what).zero?
+    remainder(what).zero?
   end
 
   def times_to_repeat(prime_factor)
