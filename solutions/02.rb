@@ -13,8 +13,7 @@ class TodoList
   end
 
   def filter(criteria)
-    filtered_todos = @todos.select { |todo| criteria.core.call(todo) }
-    new(filtered_todos)
+    TodoList.new(@todos.select { |todo| criteria.core.call(todo) })
   end
 
   def adjoin(other)
