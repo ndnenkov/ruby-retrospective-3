@@ -19,7 +19,7 @@ class Integer
   end
 
   def digits
-    abs.to_s.split('').map(&:to_i)
+    abs.to_s.chars.map(&:to_i)
   end
 
   private
@@ -48,7 +48,9 @@ class Array
   def combine_with(other)
     combined = []
     the_greater_size = (size > other.size) ? size : other.size
-    0.upto(the_greater_size.pred).each { |i| combined += what_to_append(other, i) }
+    0.upto(the_greater_size.pred).each do |i|
+      combined += what_to_append(other, i)
+    end
     combined
   end
 
