@@ -8,9 +8,8 @@ class TodoList
     @todos = todos
   end
 
-  def each
-    return @todos unless block_given?
-    @todos.each { |todo| yield todo }
+  def each(&block)
+    @todos.each &block
   end
 
   def filter(criteria)
