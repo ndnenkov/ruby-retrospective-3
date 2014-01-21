@@ -15,7 +15,7 @@ class Integer
   end
 
   def harmonic
-    (1..self).reduce { |so_far, i| so_far + i.to_r**-1 } #TODO test with 2.1
+    1.upto(self).map { |number| number.to_r**-1 }.reduce(&:+)
   end
 
   def digits
@@ -48,11 +48,12 @@ class Array
   def combine_with(other)
     combined = []
     the_greater_size = (size > other.size) ? size : other.size
-    (0..the_greater_size.pred).each { |i| combined += what_to_append(other, i) }
+    0.upto(the_greater_size.pred).each { |i| combined += what_to_append(other, i) }
     combined
   end
 
   private
+
   def what_to_append(other, index)
     if size > index and other.size > index
       [self[index], other[index]]
@@ -60,5 +61,4 @@ class Array
       size <= index ? [other[index]] : [self[index]]
     end
   end
-
 end
