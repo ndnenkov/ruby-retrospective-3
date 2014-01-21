@@ -37,8 +37,7 @@ class TodoList
   end
 
   def self.parse(text)
-    todos = text.lines.map { |line| parse_line(line) }
-    TodoList.new(todos)
+    new(text.lines.map { |line| parse_line(line) })
   end
 
   def self.parse_line(line)
