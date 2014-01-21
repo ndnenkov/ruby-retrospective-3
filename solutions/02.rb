@@ -14,7 +14,7 @@ class TodoList
 
   def filter(criteria)
     filtered_todos = @todos.select { |todo| criteria.core.call(todo) }
-    TodoList.new(filtered_todos)
+    new(filtered_todos)
   end
 
   def adjoin(other)
