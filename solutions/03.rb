@@ -1,7 +1,6 @@
 module Graphics
   class Canvas
-    attr_reader :width
-    attr_reader :height
+    attr_reader :width, :height
 
     def initialize(width, height)
       @width = width
@@ -122,8 +121,7 @@ module Graphics
   end
 
   class Point
-    attr_reader :x
-    attr_reader :y
+    attr_reader :x, :y
 
     def initialize(x, y)
       @x = x
@@ -146,8 +144,7 @@ module Graphics
   end
 
   class Line
-    attr_reader :from
-    attr_reader :to
+    attr_reader :from, :to
 
     def initialize(first_point, second_point)
       if first_point.x != second_point.x
@@ -190,8 +187,7 @@ module Graphics
   end
 
   class Rectangle
-    attr_reader :left
-    attr_reader :right
+    attr_reader :left, :right
 
     def initialize(first_point, second_point)
       if first_point.x != second_point.x
