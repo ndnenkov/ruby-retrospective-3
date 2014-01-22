@@ -2,38 +2,38 @@ class TodoList
 
   include Enumerable
 
-  attr_reader :todos
+  attr_reader :tasks
 
-  def initialize(todos)
-    @todos = todos
+  def initialize(tasks)
+    @tasks = tasks
   end
 
   def each(&block)
-    @todos.each &block
+    @tasks.each &block
   end
 
   def filter(criteria)
-    TodoList.new(@todos.select { |todo| criteria.core.call(todo) })
+    TodoList.new(@tasks.select { |todo| criteria.core.call(todo) })
   end
 
   def adjoin(other)
-    TodoList.new(@todos | other.todos)
+    TodoList.new(@tasks | other.tasks)
   end
 
   def tasks_todo
-    @todos.select { |todo| todo.status == :todo }.count
+    @tasks.select { |todo| todo.status == :todo }.count
   end
 
   def tasks_in_progress
-    @todos.select { |todo| todo.status == :current }.count
+    @tasks.select { |todo| todo.status == :current }.count
   end
 
   def tasks_completed
-    @todos.select { |todo| todo.status == :done }.count
+    @tasks.select { |todo| todo.status == :done }.count
   end
 
   def completed?
-    @todos.all? { |todo| todo.status == :done }
+    @tasks.all? { |todo| todo.status == :done }
   end
 
   def self.parse(text)
