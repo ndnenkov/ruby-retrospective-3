@@ -1,5 +1,4 @@
 class TodoList
-
   include Enumerable
 
   attr_reader :tasks
@@ -82,11 +81,7 @@ class TodoList
 end
 
 class Todo
-
-  attr_reader :status
-  attr_reader :description
-  attr_reader :priority
-  attr_reader :tags
+  attr_reader :status, :priority, :tags, :description
 
   def initialize(status, description, priority, tags)
     @status = status
@@ -111,7 +106,6 @@ class Todo
 end
 
 class Criteria
-
   attr_reader :core
 
   def initialize(core)
