@@ -64,7 +64,9 @@ module Asm
     end
 
     def jmp(condition, position)
-      @current_instruction = actual_position(position).pred if instance_eval &condition
+      if instance_eval &condition
+        @current_instruction = labels.fetch(position, position).pred
+      end
     end
 
     def self.execute((instructions, labels))
@@ -83,10 +85,6 @@ module Asm
 
     def actual_value(value)
       value.is_a?(Symbol) ? self[value] : value
-    end
-
-    def actual_position(position)
-      labels.fetch(position, position)
     end
   end
 
