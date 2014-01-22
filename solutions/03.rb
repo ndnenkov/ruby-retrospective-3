@@ -6,7 +6,7 @@ module Graphics
     def initialize(width, height)
       @width = width
       @height = height
-      @pixels = Hash.new(false)
+      @pixels = {}
     end
 
     def set_pixel(x, y)
@@ -171,22 +171,18 @@ module Graphics
     private
 
     def line_coordinates(start_x, start_y, end_x, end_y)
-      delta_x = end_x - start_x
-      delta_y = end_y - start_y
-      if delta_x >= delta_y
-        bresenham(delta_x, delta_y).map { |x, y| [x + start_x, y + start_y] }
+      delta_x, delta_y = end_x - start_x, end_y - start_y
+      y_sign = delta_y <=> 0
+      if delta_x >= delta_y.abs
+        bresenham(delta_x, delta_y.abs).map { |x, y| [x + start_x, y_sign * y + start_y] }
       else
-        bresenham(delta_y, delta_x).map { |y, x| [x + start_x, y + start_y] }
+        bresenham(delta_y.abs, delta_x).map { |y, x| [x + start_x, y_sign * y + start_y] }
       end
     end
 
-    def bresenham(x, y)#TODO rename height and n
-      height = x
-      0.upto(x).map do |n|
-        coordinates =  [n, height / (2 * x)]
-        height += 2 * y
-        coordinates
-      end
+    def bresenham(x, y)
+      return [[0, 0]] if x.zero?
+      0.upto(x).map { |n| [n, (x + 2 * n * y) / (2 * x)] }
     end
   end
 
@@ -229,12 +225,12 @@ module Graphics
     alias_method :==, :eql?
 
     def to_a
-      all_pixels = []
-      all_pixels.concat(Line.new(top_left, top_right).to_a)
-      all_pixels.concat(Line.new(top_right, bottom_right).to_a)
-      all_pixels.concat(Line.new(bottom_right, bottom_left).to_a)
-      all_pixels.concat(Line.new(bottom_left, top_left).to_a)
-      all_pixels.uniq
+      [
+        Line.new(top_left, top_right),
+        Line.new(top_right, bottom_right),
+        Line.new(bottom_right, bottom_left),
+        Line.new(bottom_left, top_left),
+      ].map(&:to_a).flatten.uniq
     end
   end
 end
