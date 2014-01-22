@@ -37,14 +37,47 @@ class TodoList
   end
 
   def self.parse(text)
-    new(text.lines.map { |line| parse_line(line) })
+    Parser.new.parse(text)
   end
 
-  def self.parse_line(line)
-    todo_raw = line.chomp.split('|').map(&:strip)
-    [0, 2].each { |index| todo_raw[index] = todo_raw[index].downcase.to_sym }
-    todo_raw[3] = todo_raw[3].nil? ? [] : todo_raw[3].split(',').map(&:strip)
-    Todo.new(*todo_raw)
+  class Parser
+    def parse(text)
+      TodoList.new(text.lines.map { |line| parse_line(line) })
+    end
+
+    def parse_line(line)
+      todo_raw = split_properties(line)
+      todo_raw = status_and_priority_proper_symbols(todo_raw)
+      todo_raw[3] = parse_tags(todo_raw[3])
+
+      Todo.new(*todo_raw)
+    end
+
+    def split_properties(line)
+      line.chomp.split('|').map(&:strip)
+    end
+
+    def parse_tags(tags)
+      tags.nil? ? [] : tags.split(',').map(&:strip)
+    end
+
+    def status_and_priority_proper_symbols(todo_raw)
+      todo_raw.each_with_index.map do |property, index|
+        property_as_symbol_if_status_or_priority(property, index)
+      end
+    end
+
+    def property_as_symbol_if_status_or_priority(property, index)
+      status_or_priority_index?(index)? proper_symbol(property) : property
+    end
+
+    def status_or_priority_index?(index)
+      index.even?
+    end
+
+    def proper_symbol(property)
+      property.downcase.to_sym
+    end
   end
 end
 
