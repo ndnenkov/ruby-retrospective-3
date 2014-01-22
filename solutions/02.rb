@@ -119,32 +119,26 @@ class Criteria
   end
 
   def self.status(todo_status)
-    status_filter = proc { |todo| todo.status == todo_status }
-    Criteria.new(status_filter)
+    Criteria.new(proc { |todo| todo.status == todo_status })
   end
 
   def self.priority(todo_priority)
-    priority_filter = proc { |todo| todo.priority == todo_priority }
-    Criteria.new(priority_filter)
+    Criteria.new(proc { |todo| todo.priority == todo_priority })
   end
 
   def self.tags(todo_tags)
-    tags_filter = proc { |todo| (todo_tags - todo.tags).empty? }
-    Criteria.new(tags_filter)
+    Criteria.new(proc { |todo| (todo_tags - todo.tags).empty? })
   end
 
   def !
-    negative = proc { |todo| not core.call(todo) }
-    Criteria.new(negative)
+    Criteria.new(proc { |todo| not core.call(todo) })
   end
 
   def |(other)
-    union = proc { |todo| core.call(todo) or other.core.call(todo) }
-    Criteria.new(union)
+    Criteria.new(proc { |todo| core.call(todo) or other.core.call(todo) })
   end
 
   def &(other)
-    intersection = proc { |todo| core.call(todo) and other.core.call(todo) }
-    Criteria.new(intersection)
+    Criteria.new(proc { |todo| core.call(todo) and other.core.call(todo) })
   end
 end
