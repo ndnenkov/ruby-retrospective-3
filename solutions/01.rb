@@ -1,5 +1,4 @@
 class Integer
-
   def prime?
     return false if self <= 1
     2.upto(pred).all? { |possible_divisor| not divisable_by?(possible_divisor) }
@@ -30,7 +29,6 @@ class Integer
 end
 
 class Array
-
   def frequencies
     Hash[map { |element| [element, count(element)] }]
   end
