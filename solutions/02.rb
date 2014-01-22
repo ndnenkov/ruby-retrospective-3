@@ -96,13 +96,17 @@ class Todo
   end
 
   def eql?(other)
-    return false unless @status == other.status and @priority == other.priority
-    return false unless @description == other.description
-    (@tags - other.tags).empty? and (other.tags - @tags).empty?
+    todo_raw == other.todo_raw
   end
 
   def hash
-    status.hash + description.hash + priority.hash + tags.sort.hash
+    todo_raw.hash
+  end
+
+  protected
+
+  def todo_raw
+    [@status, @priority, @tags.sort, @description]
   end
 end
 
