@@ -22,51 +22,55 @@ module Graphics
     end
 
     def render_as(renderer)
-      renderer.render(self)
+      renderer.new(self).render
     end
   end
 
-  module Renderers
-    def render(canvas)#TODO refactor
-      indexes = 0.upto(canvas.width.pred).to_a.product(0.upto(canvas.height.pred).to_a)
-      pixels = indexes.map(&:reverse).map { |x, y| canvas.pixel_at?(x, y) }
-      rendered_lines = pixels.map { |pixel| render_pixel(pixel) }.each_slice(canvas.width)
-      canvas_to_string = rendered_lines.map { |line| add_new_line(line) }.join.chomp
-      prefix + canvas_to_string + suffix
-    end
+   module Renderers
+    class Base
+      attr_reader :canvas
 
-    class Ascii
-      extend Renderers
+      def initialize(canvas)
+        @canvas = canvas
+      end
 
-      class << self
-        private
-
-        def render_pixel(pixel)
-          pixel ? "@" : "-"
+      def render
+        pixels = 0.upto(canvas.height.pred).map do |y|
+          0.upto(canvas.width.pred).map { |x| pixel_at(x, y) }
         end
 
-        def add_new_line(slice)
-          slice << "\n"
-        end
+        join_lines pixels.map { |line| join_pixels_in line }
+      end
 
-        def prefix
-          ""
-        end
+      private
 
-        def suffix
-          ""
-        end
+      def pixel_at(x, y)
+        canvas.pixel_at?(x, y) ? full_pixel : blank_pixel
+      end
+
+      def join_pixels_in(line)
+        line.join('')
       end
     end
 
-    class Html
-      extend Renderers
+    class Ascii < Base
+      private
 
-      class << self
-        private
+      def full_pixel
+        '@'
+      end
 
-        PREFIX = <<-html.gsub /^\s+|$\n/, ""#TODO experiment with .freeze
-        <!DOCTYPE html>
+      def blank_pixel
+        '-'
+      end
+
+      def join_lines(lines)
+        lines.join("\n")
+      end
+    end
+
+    class Html < Base
+      TEMPLATE = '<!DOCTYPE html>
         <html>
         <head>
           <title>Rendered Canvas</title>
@@ -91,29 +95,28 @@ module Graphics
         </head>
         <body>
           <div class="canvas">
-        html
-
-        SUFFIX = <<-html.gsub /^\s+|$\n/, ""#TODO experiment with .freeze
+            %s
           </div>
         </body>
         </html>
-        html
+      '.freeze
 
-        def render_pixel(pixel)
-          pixel ? "<b></b>" : "<i></i>"
-        end
+      def render
+        TEMPLATE % super
+      end
 
-        def add_new_line(slice)
-          slice << "<br>"
-        end
+      private
 
-        def prefix
-          PREFIX
-        end
+      def full_pixel
+        '<b></b>'
+      end
 
-        def suffix
-          SUFFIX
-        end
+      def blank_pixel
+        '<i></i>'
+      end
+
+      def join_lines(lines)
+        lines.join('<br>')
       end
     end
   end
@@ -203,11 +206,11 @@ module Graphics
     end
 
     def top_right
-      Point.new([@left.x, @right.x].min, [@left.y, @right.y].max)
+      Point.new([@left.x, @right.x].max, [@left.y, @right.y].min)
     end
 
     def bottom_left
-      Point.new([@left.x, @right.x].max, [@left.y, @right.y].min)
+      Point.new([@left.x, @right.x].min, [@left.y, @right.y].max)
     end
 
     def bottom_right
@@ -215,11 +218,11 @@ module Graphics
     end
 
     def eql?(other)
-      [@left, @right].eql?([other.left, other.right])
+      [top_left, bottom_right].eql?([other.top_left, other.bottom_right])
     end
 
     def hash
-      [@left, @right].hash
+      [top_left, bottom_right].hash
     end
 
     alias_method :==, :eql?
@@ -230,7 +233,7 @@ module Graphics
         Line.new(top_right, bottom_right),
         Line.new(bottom_right, bottom_left),
         Line.new(bottom_left, top_left),
-      ].map(&:to_a).flatten.uniq
+      ].map(&:to_a).flatten(1).uniq
     end
   end
 end
