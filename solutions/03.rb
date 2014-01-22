@@ -16,8 +16,8 @@ module Graphics
       @pixels[[x, y]]
     end
 
-    def draw(shape)
-      shape.to_a.each { |x, y| set_pixel(x, y) }
+    def draw(drawable)
+      drawable.draw_self_on_canvas(self)
     end
 
     def render_as(renderer)
@@ -120,7 +120,13 @@ module Graphics
     end
   end
 
-  class Point
+  class Drawable
+    def draw_self_on_canvas(canvas)
+      to_a.each { |x, y| canvas.set_pixel(x,y) }
+    end
+  end
+
+  class Point < Drawable
     attr_reader :x, :y
 
     def initialize(x, y)
@@ -143,7 +149,7 @@ module Graphics
     end
   end
 
-  class Line
+  class Line < Drawable
     attr_reader :from, :to
 
     def initialize(first_point, second_point)
@@ -186,7 +192,7 @@ module Graphics
     end
   end
 
-  class Rectangle
+  class Rectangle < Drawable
     attr_reader :left, :right
 
     def initialize(first_point, second_point)
