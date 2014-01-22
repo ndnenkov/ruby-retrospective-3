@@ -73,8 +73,7 @@ module Asm
       new(instructions, labels, 0, 0, 0, 0).instance_eval do
         @current_instruction = -1
         while instructions[@current_instruction.next] do
-          @current_instruction += 1
-          send *instructions[@current_instruction]
+          send *instructions[@current_instruction += 1]
         end
 
         [ax, bx, cx, dx]
